@@ -15,7 +15,7 @@ on:
         default: latest
 
 jobs:
-  prepare:
+  docker:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
