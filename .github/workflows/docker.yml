@@ -1,0 +1,67 @@
+name: Docker
+
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        type: choice
+        description: 请选择需要构建的镜像
+        options:
+        - laravel
+        required: true
+      tag:
+        type: string
+        description: 请输入镜像的版本号
+        default: latest
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: prepare
+        name: Prepare
+        run: |
+          set -e
+
+          image="${{ github.event.inputs.image }}"
+          tag="${{ github.event.inputs.tag }}"
+          if [ "$tag" = "latest" ]; then
+            path="./$image"
+          else
+            path="./$image/$tag"
+          fi
+          dockerfile="$path/Dockerfile"
+
+          if [ ! -f "$dockerfile" ]; then
+            echo "$dockerfile does not exist." >&2
+            exit 1
+          fi
+
+          echo "image=$image" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "path=$path" >> "$GITHUB_OUTPUT"
+
+      - name: Test
+        run: |
+          ls -al
+          echo "image: ${{ steps.prepare.outputs.image }}"
+          echo "tag: ${{ steps.prepare.outputs.tag }}"
+          echo "path: ${{ steps.prepare.outputs.path }}"
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: edramkai
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ steps.prepare.outputs.path }}
+          push: true
+          tags: edramkai/${{steps.prepare.outputs.image}}:${{ steps.prepare.outputs.tag }}
