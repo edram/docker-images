@@ -75,3 +75,4 @@ jobs:
           imageName: edramkai/${{steps.prepare.outputs.image}}
           imageTag: ${{ steps.prepare.outputs.tag }}-vscode
           cacheFrom: edramkai/${{steps.prepare.outputs.image}}:${{ steps.prepare.outputs.tag }}
+          push: always
