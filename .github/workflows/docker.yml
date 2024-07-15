@@ -68,8 +68,9 @@ jobs:
           context: ${{ steps.prepare.outputs.path }}
           push: true
           tags: edramkai/${{steps.prepare.outputs.image}}:${{ steps.prepare.outputs.tag }}
-      - name: Pre-build image and run make ci-build in dev container
+      - name: Build devcontainer
         uses: devcontainers/ci@v0.3
         with:
+          subFolder: ${{ steps.prepare.outputs.path }}
           imageName: edramkai/${{steps.prepare.outputs.image}}:${{ steps.prepare.outputs.tag }}-vscode
           cacheFrom: edramkai/${{steps.prepare.outputs.image}}:${{ steps.prepare.outputs.tag }}
