@@ -1,4 +1,4 @@
-FROM php:8.3-cli-bullseye
+FROM php:8.3-cli-bookworm
 
 # 镜像说明
 LABEL maintainer="edram"
