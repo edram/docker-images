@@ -13,6 +13,9 @@ on:
         type: string
         description: 请输入镜像的版本号
         default: latest
+      devcontainer:
+        required: true
+        type: boolean
 
 jobs:
   docker:
@@ -63,3 +66,12 @@ jobs:
           context: ${{ steps.prepare.outputs.path }}
           push: true
           tags: edramkai/${{steps.prepare.outputs.image}}:${{ steps.prepare.outputs.tag }}
+      - name: Build devcontainer
+        uses: devcontainers/ci@v0.3
+        if:  ${{ inputs.devcontainer }} 
+        with:
+          subFolder: ${{ steps.prepare.outputs.path }}
+          imageName: edramkai/${{steps.prepare.outputs.image}}
+          imageTag: ${{ steps.prepare.outputs.tag }}-vscode
+          cacheFrom: edramkai/${{steps.prepare.outputs.image}}:${{ steps.prepare.outputs.tag }}
+          push: always
