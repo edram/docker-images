@@ -47,3 +47,6 @@ RUN chmod +x /usr/local/bin/install-php-extensions && \
         # laravel-medialibrary
         exif \
     ;
+
+COPY ./swoole_loader73.so /usr/local/lib/php/extensions/no-debug-non-zts-20180731/swoole_loader.so
+COPY ./docker-php-ext-greatmall.ini /usr/local/etc/php/conf.d/
