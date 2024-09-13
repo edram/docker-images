@@ -8,6 +8,7 @@ on:
         description: 请选择需要构建的镜像
         options:
         - laravel
+        - greatmall
         required: true
       tag:
         type: string
