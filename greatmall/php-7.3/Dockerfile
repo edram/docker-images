@@ -9,7 +9,7 @@ LABEL version="php-7.3.32"
 #     && echo 'http://mirrors.aliyun.com/alpine/v3.14/community/' >> /etc/apk/repositories
 
 # composer
-RUN curl https://github.com/composer/composer/releases/download/2.0.14/composer.phar -s -S -o /usr/local/bin/composer && \
+RUN curl https://github.com/composer/composer/releases/download/2.0.14/composer.phar -L -s -S -o /usr/local/bin/composer && \
     chmod +x /usr/local/bin/composer
 ENV PATH=/root/.composer/vendor/bin:$PATH
 
