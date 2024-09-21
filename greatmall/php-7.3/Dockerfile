@@ -16,6 +16,8 @@ ENV PATH=/root/.composer/vendor/bin:$PATH
 # 安装额外依赖
 RUN apt-get update \
     && apt-get -y install \
+        # composer 某些依赖需要从 git 克隆安装
+        git \
         # composer install 需要解压
         unzip \
         # 提供 cron 定时任务
