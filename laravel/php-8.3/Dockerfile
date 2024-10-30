@@ -22,6 +22,9 @@ RUN apt-get update \
         cron \
         # supervisor
         supervisor \
+        # image
+        jpegoptim \
+        optipng pngquant \
     # 清理镜像
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
