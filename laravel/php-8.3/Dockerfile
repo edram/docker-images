@@ -32,7 +32,7 @@ RUN chmod +x /usr/local/bin/install-php-extensions && \
     install-php-extensions \
         bcmath \
         gd \
-        imagick \
+        imagick/imagick@master \
         # mysql
         mysqli pdo_mysql \
         # sqlsrv
