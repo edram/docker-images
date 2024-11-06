@@ -14,4 +14,10 @@ RUN wget https://packages.microsoft.com/repos/edge/pool/main/m/microsoft-edge-st
     && apt-get install -y --fix-missing ./microsoft-edge-stable_130.0.2849.68-1_amd64.deb \
     && rm -rf ./microsoft-edge-stable_130.0.2849.68-1_amd64.deb
 
+# nodejs
+RUN curl -sL https://deb.nodesource.com/setup_22.x | bash - 
+RUN apt-get install -y nodejs
+
+RUN npm install puppeteer
+
 RUN apt-get clean -y && rm -rf /var/lib/apt/lists/*
