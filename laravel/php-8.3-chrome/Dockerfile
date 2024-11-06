@@ -9,9 +9,9 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > mic
     && sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-beta.list' \
     && rm microsoft.gpg \
     && apt update \
-    && apt install microsoft-edge-beta
+    && apt install -y microsoft-edge-beta
 
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
-    apt install --fix-missing ./google-chrome-stable_current_amd64.deb
+    apt install -y --fix-missing ./google-chrome-stable_current_amd64.deb
 
 RUN apt-get clean -y && rm -rf /var/lib/apt/lists/*
