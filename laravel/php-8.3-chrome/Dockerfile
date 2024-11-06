@@ -4,14 +4,10 @@ FROM edramkai/laravel:php-8.3
 LABEL maintainer="edram"
 LABEL version="php-8.3-chrome"
 
-RUN curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg \
-    && install -o root -g root -m 644 microsoft.gpg /usr/share/keyrings/ \
-    && sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-beta.list' \
-    && rm microsoft.gpg \
-    && apt update \
-    && apt install -y microsoft-edge-beta
+RUN apt-get update && apt-get install -y wget
 
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
-    apt install -y --fix-missing ./google-chrome-stable_current_amd64.deb
+    && apt-get install -y --fix-missing ./google-chrome-stable_current_amd64.deb \
+    && rm -rf ./google-chrome-stable_current_amd64.deb
 
 RUN apt-get clean -y && rm -rf /var/lib/apt/lists/*
