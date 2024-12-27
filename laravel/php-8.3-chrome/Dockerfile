@@ -17,6 +17,7 @@ RUN wget https://packages.microsoft.com/repos/edge/pool/main/m/microsoft-edge-st
 # nodejs
 RUN curl -sL https://deb.nodesource.com/setup_22.x | bash - 
 RUN apt-get install -y nodejs
+RUN corepack enable pnpm
 
 RUN npm install -g puppeteer
 
