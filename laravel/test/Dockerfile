@@ -1,53 +1,25 @@
-FROM php:8.3-cli-bookworm
+FROM edramkai/laravel:php-8.3
 
 # 镜像说明
 LABEL maintainer="edram"
-LABEL version="php-8.3"
+LABEL version="php-8.3-chrome"
 
-# 配置阿里云镜像
-# RUN echo 'http://mirrors.aliyun.com/alpine/v3.14/main/' > /etc/apk/repositories \
-#     && echo 'http://mirrors.aliyun.com/alpine/v3.14/community/' >> /etc/apk/repositories
+RUN apt-get update && apt-get install -y wget
 
-# composer
-RUN curl https://mirrors.aliyun.com/composer/composer.phar -s -S -o /usr/local/bin/composer && \
-    chmod +x /usr/local/bin/composer
-ENV PATH=/root/.composer/vendor/bin:$PATH
+# https://learn.microsoft.com/en-us/windows/wsl/tutorials/gui-apps
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+    && apt-get install -y --fix-missing ./google-chrome-stable_current_amd64.deb \
+    && rm -rf ./google-chrome-stable_current_amd64.deb
 
-# 安装额外依赖
-RUN apt-get update \
-    && apt-get -y install \
-        # composer install 需要解压
-        unzip \
-        # 提供 cron 定时任务
-        cron \
-        # supervisor
-        supervisor \
-        # image
-        jpegoptim \
-        optipng pngquant \
-    # 清理镜像
-    && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+RUN wget https://packages.microsoft.com/repos/edge/pool/main/m/microsoft-edge-stable/microsoft-edge-stable_133.0.3065.92-1_amd64.deb \
+    && apt-get install -y --fix-missing ./microsoft-edge-stable_133.0.3065.92-1_amd64.deb \
+    && rm -rf ./microsoft-edge-stable_133.0.3065.92-1_amd64.deb
 
-# php
-ADD https://github.com/mlocati/docker-php-extension-installer/releases/download/2.7.31/install-php-extensions /usr/local/bin/
+# nodejs
+RUN curl -sL https://deb.nodesource.com/setup_22.x | bash - 
+RUN apt-get install -y nodejs
+RUN corepack enable pnpm
 
-RUN chmod +x /usr/local/bin/install-php-extensions && \
-    install-php-extensions \
-        bcmath \
-        gd \
-        imagick/imagick@master \
-        # mysql
-        mysqli pdo_mysql \
-        # sqlsrv
-        sqlsrv pdo_sqlsrv \
-        # maatwebsite/excel
-        zip \
-        # queue
-        pcntl \
-        # redis
-        redis \ 
-        # swoole
-        swoole \
-        # laravel-medialibrary
-        exif \
-    ;
+RUN npm install -g puppeteer
+
+RUN apt-get clean -y && rm -rf /var/lib/apt/lists/*
