@@ -1,1 +1,0 @@
-FROM edramkai/laravel:php-8.3-chrome
