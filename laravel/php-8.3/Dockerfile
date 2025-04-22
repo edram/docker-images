@@ -29,7 +29,7 @@ RUN apt-get update \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # php
-ADD https://github.com/mlocati/docker-php-extension-installer/releases/download/2.6.1/install-php-extensions /usr/local/bin/
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/download/2.7.31/install-php-extensions /usr/local/bin/
 
 RUN chmod +x /usr/local/bin/install-php-extensions && \
     install-php-extensions \
