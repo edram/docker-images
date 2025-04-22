@@ -63,6 +63,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push
         uses: docker/build-push-action@v6
+        if:  ${{ !inputs.devcontainer }} 
         with:
           context: ${{ steps.prepare.outputs.path }}
           push: true
