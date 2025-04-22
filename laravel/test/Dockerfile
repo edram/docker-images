@@ -2,6 +2,7 @@ FROM php:8.3-cli-bookworm
 
 # 镜像说明
 LABEL maintainer="edram"
+LABEL version="php-8.3"
 
 # 配置阿里云镜像
 # RUN echo 'http://mirrors.aliyun.com/alpine/v3.14/main/' > /etc/apk/repositories \
@@ -33,4 +34,20 @@ ADD https://github.com/mlocati/docker-php-extension-installer/releases/download/
 RUN chmod +x /usr/local/bin/install-php-extensions && \
     install-php-extensions \
         bcmath \
+        gd \
+        imagick/imagick@master \
+        # mysql
+        mysqli pdo_mysql \
+        # sqlsrv
+        sqlsrv pdo_sqlsrv \
+        # maatwebsite/excel
+        zip \
+        # queue
+        pcntl \
+        # redis
+        redis \ 
+        # swoole
+        swoole \
+        # laravel-medialibrary
+        exif \
     ;
