@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:1.9.1-php8.4
+FROM dunglas/frankenphp:1.9.1-php8.4-bookworm
 
 # 镜像说明
 LABEL maintainer="edram"
