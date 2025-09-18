@@ -6,7 +6,6 @@ LABEL maintainer="edram"
 # 安装额外依赖
 RUN apt-get update \
     && apt-get -y install \
-        @composer \
         wget \
         # composer install 需要解压
         unzip \
@@ -36,6 +35,7 @@ RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.d
     && rm -rf ./google-chrome-stable_current_amd64.deb
 
 RUN install-php-extensions \
+        @composer \
         bcmath \
         gd \
         imagick/imagick@master \
