@@ -1,16 +1,12 @@
-FROM dunglas/frankenphp:1.9.1-php8.4-bookworm
+FROM dunglas/frankenphp:1.9.1-php8.3-bookworm
 
 # 镜像说明
 LABEL maintainer="edram"
 
-# composer
-RUN curl https://mirrors.aliyun.com/composer/composer.phar -s -S -o /usr/local/bin/composer && \
-    chmod +x /usr/local/bin/composer
-ENV PATH=/root/.composer/vendor/bin:$PATH
-
 # 安装额外依赖
 RUN apt-get update \
     && apt-get -y install \
+        @composer \
         wget \
         # composer install 需要解压
         unzip \
