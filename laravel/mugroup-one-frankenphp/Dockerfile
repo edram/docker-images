@@ -3,6 +3,15 @@ FROM dunglas/frankenphp:1.9.1-php8.3-bookworm
 # 镜像说明
 LABEL maintainer="edram"
 
+# postgres-client 用户备份
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl ca-certificates gnupg lsb-release && \
+    install -d /usr/share/postgresql-common/pgdg && \
+    curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc && \
+    echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" \
+        > /etc/apt/sources.list.d/pgdg.list && \
+    apt-get -y install postgresql-client-16
+
 # 安装额外依赖
 RUN apt-get update \
     && apt-get -y install \
