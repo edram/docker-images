@@ -3,6 +3,9 @@ FROM dunglas/frankenphp:1.9.1-php8.3-bookworm
 # 镜像说明
 LABEL maintainer="edram"
 
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y ca-certificates gnupg lsb-release curl && rm -rf /var/lib/apt/lists/*
+
 # postgres-client 用户备份
 RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
   && echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |tee /etc/apt/sources.list.d/pgdg.list \
