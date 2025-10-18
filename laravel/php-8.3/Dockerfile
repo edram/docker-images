@@ -34,6 +34,7 @@ ADD https://github.com/mlocati/docker-php-extension-installer/releases/download/
 RUN chmod +x /usr/local/bin/install-php-extensions && \
     install-php-extensions \
         bcmath \
+        intl \
         gd \
         imagick/imagick@master \
         # mysql
