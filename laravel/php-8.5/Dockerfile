@@ -27,8 +27,6 @@ RUN install-php-extensions \
         imagick/imagick@master \
         # mysql
         mysqli pdo_mysql \
-        # sqlsrv
-        sqlsrv pdo_sqlsrv \
         # maatwebsite/excel
         zip \
         # queue
