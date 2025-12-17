@@ -34,7 +34,7 @@ RUN install-php-extensions \
         # redis
         redis \ 
         # swoole
-        swoole \
+        # swoole \
         # laravel-medialibrary
         exif \
     ;
