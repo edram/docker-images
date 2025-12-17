@@ -1,1 +1,1 @@
-FROM edramkai/laravel:mugroup-one
+FROM edramkai/laravel:mugroup-one-frankenphp
