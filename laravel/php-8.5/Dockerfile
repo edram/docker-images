@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:1.10.1-php8.5
+FROM dunglas/frankenphp:1.12.2-php8.5
 
 # 镜像说明
 LABEL maintainer="edram"
@@ -34,7 +34,7 @@ RUN install-php-extensions \
         # redis
         redis \ 
         # swoole
-        # swoole \
+        swoole \
         # laravel-medialibrary
         exif \
     ;
