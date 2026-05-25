@@ -42,12 +42,13 @@ RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.d
     && apt-get install -y --fix-missing ./google-chrome-stable_current_amd64.deb \
     && rm -rf ./google-chrome-stable_current_amd64.deb
 
+# imagick/imagick@master
 RUN install-php-extensions \
         @composer \
         bcmath \
         intl \
         gd \
-        imagick/imagick@master \
+        imagick \
         # mysql
         mysqli pdo_mysql \
         # sqlsrv
