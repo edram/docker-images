@@ -1,15 +1,28 @@
-FROM dunglas/frankenphp:1.9.1-php8.3-bookworm
+FROM dunglas/frankenphp:1.9.1-php8.3-trixie
 
 # 镜像说明
 LABEL maintainer="edram"
 
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y ca-certificates gnupg lsb-release curl && rm -rf /var/lib/apt/lists/*
-
 # postgres-client 用户备份
-RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
-  && echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |tee /etc/apt/sources.list.d/pgdg.list \
-  && apt-get update && apt-get install -y postgresql-client-16
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    ca-certificates \
+    && install -d /usr/share/postgresql-common/pgdg \
+    && curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc --fail \
+       https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+    && . /etc/os-release \
+    && echo "Types: deb\n\
+URIs: https://apt.postgresql.org/pub/repos/apt\n\
+Suites: ${VERSION_CODENAME}-pgdg\n\
+Architectures: $(dpkg --print-architecture)\n\
+Components: main\n\
+Signed-By: /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc" \
+       > /etc/apt/sources.list.d/pgdg.sources \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+       postgresql-client-16 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # 安装额外依赖
 RUN apt-get update \
@@ -41,6 +54,8 @@ RUN npm install -g puppeteer
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
     && apt-get install -y --fix-missing ./google-chrome-stable_current_amd64.deb \
     && rm -rf ./google-chrome-stable_current_amd64.deb
+
+ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
 # imagick/imagick@master
 RUN install-php-extensions \
