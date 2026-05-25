@@ -60,7 +60,7 @@ RUN install-php-extensions \
         # redis
         redis \ 
         # swoole
-        swoole \
+        swoole-6.0.2 \
         # laravel-medialibrary
         exif \
     ;
