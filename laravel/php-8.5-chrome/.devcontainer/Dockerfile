@@ -1,0 +1,1 @@
+FROM edramkai/laravel:php-8.5
