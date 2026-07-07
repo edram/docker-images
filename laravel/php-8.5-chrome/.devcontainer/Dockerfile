@@ -1,1 +1,1 @@
-FROM edramkai/laravel:php-8.5
+FROM edramkai/laravel:php-8.5-chrome
