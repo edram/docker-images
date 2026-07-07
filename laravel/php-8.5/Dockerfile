@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:1.12.2-php8.5
+FROM dunglas/frankenphp:1.12.4-php8.5-trixie
 
 # 镜像说明
 LABEL maintainer="edram"
@@ -19,12 +19,15 @@ RUN apt-get update \
     # 清理镜像
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
+ENV COMPOSER_HOME=/root/.composer
+ENV PATH="${COMPOSER_HOME}/vendor/bin:${PATH}"
+
 RUN install-php-extensions \
         @composer \
         bcmath \
         intl \
         gd \
-        imagick/imagick@master \
+        imagick \
         # mysql
         mysqli pdo_mysql \
         # maatwebsite/excel
@@ -41,4 +44,6 @@ RUN install-php-extensions \
 
 # nodejs
 RUN curl -sL https://deb.nodesource.com/setup_24.x | bash - 
-RUN apt-get install -y nodejs
+RUN apt-get install -y nodejs \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN corepack enable pnpm
