@@ -36,8 +36,6 @@ RUN install-php-extensions \
         pcntl \
         # redis
         redis \ 
-        # swoole
-        swoole \
         # laravel-medialibrary
         exif \
     ;
