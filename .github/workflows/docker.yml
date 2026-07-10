@@ -78,5 +78,6 @@ jobs:
           subFolder: ${{ steps.prepare.outputs.path }}
           imageName: edramkai/${{steps.prepare.outputs.image}}
           imageTag: ${{ steps.prepare.outputs.tag }}-vscode
+          platform: linux/amd64,linux/arm64
           cacheFrom: edramkai/${{steps.prepare.outputs.image}}:${{ steps.prepare.outputs.tag }}
           push: always
