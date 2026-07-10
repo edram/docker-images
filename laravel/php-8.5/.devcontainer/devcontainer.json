@@ -15,6 +15,7 @@
             "version": "latest",
             "ppa": "false"
         },
+        "ghcr.io/devcontainers/features/github-cli:1": {},
         "ghcr.io/edram/devcontainer-features/claude-code:1": {},
         "ghcr.io/edram/devcontainer-features/codex:1": {},
         "ghcr.io/devcontainers/features/sshd:1": {
