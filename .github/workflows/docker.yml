@@ -54,6 +54,8 @@ jobs:
           echo "tag: ${{ steps.prepare.outputs.tag }}"
           echo "path: ${{ steps.prepare.outputs.path }}"
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to Docker Hub
@@ -68,6 +70,7 @@ jobs:
           context: ${{ steps.prepare.outputs.path }}
           push: true
           tags: edramkai/${{steps.prepare.outputs.image}}:${{ steps.prepare.outputs.tag }}
+          platforms: linux/amd64,linux/arm64
       - name: Build devcontainer
         uses: devcontainers/ci@v0.3
         if:  ${{ inputs.devcontainer }} 
