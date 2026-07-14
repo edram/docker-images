@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:1.9.1-php8.3-trixie
+FROM dunglas/frankenphp:1.12.4-php8.3-trixie
 
 # 镜像说明
 LABEL maintainer="edram"
@@ -115,8 +115,6 @@ RUN install-php-extensions \
         pcntl \
         # redis
         redis \
-        # swoole
-        swoole-6.0.2 \
         # laravel-medialibrary
         exif \
     ;
