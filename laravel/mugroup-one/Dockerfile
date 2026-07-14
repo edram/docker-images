@@ -106,9 +106,11 @@ RUN install-php-extensions \
         gd \
         imagick \
         # mysql
-        mysqli pdo_mysql \
+        pdo_mysql \
+        # pgsql
+        pdo_pgsql \
         # sqlsrv
-        sqlsrv pdo_sqlsrv \
+        pdo_sqlsrv \
         # maatwebsite/excel
         zip \
         # queue
