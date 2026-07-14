@@ -1,4 +1,4 @@
-name: Docker
+name: Dev Container
 
 on:
   workflow_dispatch:
@@ -17,7 +17,7 @@ on:
 
 env:
   IMAGE_NAME: edramkai/${{ inputs.image }}
-  IMAGE_TAG: ${{ inputs.tag }}
+  IMAGE_TAG: ${{ inputs.tag }}-vscode
   BUILD_CONTEXT: ${{ inputs.tag == 'latest' && format('./{0}', inputs.image) || format('./{0}/{1}', inputs.image, inputs.tag) }}
 
 jobs:
@@ -28,10 +28,8 @@ jobs:
         include:
           - runner: ubuntu-latest
             platform: linux/amd64
-            platform_suffix: linux-amd64
           - runner: ubuntu-24.04-arm
             platform: linux/arm64
-            platform_suffix: linux-arm64
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
@@ -48,13 +46,16 @@ jobs:
           username: edramkai
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v6
+      - name: Build and push devcontainer
+        uses: devcontainers/ci@v0.3
         with:
-          context: ${{ env.BUILD_CONTEXT }}
-          platforms: ${{ matrix.platform }}
-          push: true
-          tags: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}-${{ matrix.platform_suffix }}
+          subFolder: ${{ env.BUILD_CONTEXT }}
+          imageName: ${{ env.IMAGE_NAME }}
+          imageTag: ${{ env.IMAGE_TAG }}
+          platform: ${{ matrix.platform }}
+          useNativeRunner: true
+          cacheFrom: ${{ env.IMAGE_NAME }}:${{ inputs.tag }}
+          push: always
 
   manifest:
     needs: build
@@ -69,9 +70,9 @@ jobs:
           username: edramkai
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Merge image manifests
-        run: |
-          docker buildx imagetools create \
-            --tag "${IMAGE_NAME}:${IMAGE_TAG}" \
-            "${IMAGE_NAME}:${IMAGE_TAG}-linux-amd64" \
-            "${IMAGE_NAME}:${IMAGE_TAG}-linux-arm64"
+      - name: Merge devcontainer manifests
+        uses: devcontainers/ci/merge@v0.3
+        with:
+          imageName: ${{ env.IMAGE_NAME }}
+          imageTag: ${{ env.IMAGE_TAG }}
+          platforms: linux/amd64,linux/arm64
