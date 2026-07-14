@@ -14,22 +14,54 @@ on:
       tag:
         type: string
         description: 请输入镜像的版本号
-        default: latest
+        required: true
 
 permissions:
   contents: read
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      context: ${{ steps.config.outputs.context }}
+      is_latest: ${{ steps.config.outputs.is_latest }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Resolve image configuration
+        id: config
+        env:
+          IMAGE: ${{ inputs.image }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          context="./${IMAGE}/${TAG}"
+          latest_tag="$(jq -r --arg image "$IMAGE" '.[$image].latest // empty' .github/docker-images.json)"
+
+          test -f "$context/Dockerfile"
+
+          is_latest=false
+          if [[ "$TAG" == "$latest_tag" ]]; then
+            is_latest=true
+          fi
+
+          {
+            echo "context=$context"
+            echo "is_latest=$is_latest"
+          } >> "$GITHUB_OUTPUT"
+
   build:
+    needs: prepare
     uses: docker/github-builder/.github/workflows/build.yml@v1
     with:
-      context: ${{ inputs.tag == 'latest' && format('./{0}', inputs.image) || format('./{0}/{1}', inputs.image, inputs.tag) }}
+      context: ${{ needs.prepare.outputs.context }}
       output: image
       platforms: linux/amd64,linux/arm64
       push: true
       sign: "false"
       meta-images: edramkai/${{ inputs.image }}
-      meta-tags: type=raw,value=${{ inputs.tag }}
+      meta-tags: |
+        type=raw,value=${{ inputs.tag }},priority=200
+        type=raw,value=latest,enable=${{ needs.prepare.outputs.is_latest == 'true' }},priority=100
       meta-flavor: latest=false
     secrets:
       registry-auths: |

@@ -1,5 +1,5 @@
 name: Dev Container
-run-name: "Dev Container · edramkai/${{ inputs.image }}:${{ inputs.tag }}-vscode"
+run-name: "Dev Container · edramkai/devcontainers-${{ inputs.image }}:${{ inputs.tag }}"
 
 on:
   workflow_dispatch:
@@ -14,15 +14,44 @@ on:
       tag:
         type: string
         description: 请输入镜像的版本号
-        default: latest
+        required: true
 
 env:
-  IMAGE_NAME: edramkai/${{ inputs.image }}
-  IMAGE_TAG: ${{ inputs.tag }}-vscode
-  BUILD_CONTEXT: ${{ inputs.tag == 'latest' && format('./{0}', inputs.image) || format('./{0}/{1}', inputs.image, inputs.tag) }}
+  IMAGE_NAME: edramkai/devcontainers-${{ inputs.image }}
+  IMAGE_TAG: ${{ inputs.tag }}
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      context: ${{ steps.config.outputs.context }}
+      is_latest: ${{ steps.config.outputs.is_latest }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Resolve image configuration
+        id: config
+        env:
+          IMAGE: ${{ inputs.image }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          context="./${IMAGE}/${TAG}"
+          latest_tag="$(jq -r --arg image "$IMAGE" '.[$image].latest // empty' .github/docker-images.json)"
+
+          test -f "$context/.devcontainer/devcontainer.json"
+
+          is_latest=false
+          if [[ "$TAG" == "$latest_tag" ]]; then
+            is_latest=true
+          fi
+
+          {
+            echo "context=$context"
+            echo "is_latest=$is_latest"
+          } >> "$GITHUB_OUTPUT"
+
   build:
+    needs: prepare
     strategy:
       fail-fast: false
       matrix:
@@ -34,9 +63,6 @@ jobs:
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v7
-
-      - name: Validate build context
-        run: test -f "$BUILD_CONTEXT/Dockerfile"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -50,17 +76,21 @@ jobs:
       - name: Build and push devcontainer
         uses: devcontainers/ci@v0.3
         with:
-          subFolder: ${{ env.BUILD_CONTEXT }}
+          subFolder: ${{ needs.prepare.outputs.context }}
           imageName: ${{ env.IMAGE_NAME }}
           imageTag: ${{ env.IMAGE_TAG }}
           platform: ${{ matrix.platform }}
           useNativeRunner: true
-          cacheFrom: ${{ env.IMAGE_NAME }}:${{ inputs.tag }}
+          cacheFrom: edramkai/${{ inputs.image }}:${{ inputs.tag }}
           push: always
 
   manifest:
-    needs: build
+    needs:
+      - prepare
+      - build
     runs-on: ubuntu-latest
+    env:
+      IS_LATEST: ${{ needs.prepare.outputs.is_latest }}
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -73,7 +103,12 @@ jobs:
 
       - name: Merge devcontainer manifests
         run: |
+          tags=(--tag "${IMAGE_NAME}:${IMAGE_TAG}")
+          if [[ "$IS_LATEST" == "true" ]]; then
+            tags+=(--tag "${IMAGE_NAME}:latest")
+          fi
+
           docker buildx imagetools create \
-            --tag "${IMAGE_NAME}:${IMAGE_TAG}" \
+            "${tags[@]}" \
             "${IMAGE_NAME}:${IMAGE_TAG}-linux-amd64" \
             "${IMAGE_NAME}:${IMAGE_TAG}-linux-arm64"

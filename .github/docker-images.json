@@ -1,0 +1,8 @@
+{
+  "laravel": {
+    "latest": "php-8.5"
+  },
+  "greatmall": {
+    "latest": "php-7.3"
+  }
+}
