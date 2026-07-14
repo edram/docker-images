@@ -55,8 +55,6 @@ RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.d
     && apt-get install -y --fix-missing ./google-chrome-stable_current_amd64.deb \
     && rm -rf ./google-chrome-stable_current_amd64.deb
 
-ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-
 # imagick/imagick@master
 RUN install-php-extensions \
         @composer \
