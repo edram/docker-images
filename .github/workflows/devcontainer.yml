@@ -1,4 +1,5 @@
 name: Dev Container
+run-name: "Dev Container · edramkai/${{ inputs.image }}:${{ inputs.tag }}-vscode"
 
 on:
   workflow_dispatch:

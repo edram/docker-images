@@ -1,4 +1,5 @@
 name: Docker
+run-name: "Docker · edramkai/${{ inputs.image }}:${{ inputs.tag }}"
 
 on:
   workflow_dispatch:
