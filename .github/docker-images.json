@@ -1,8 +1,36 @@
 {
   "laravel": {
-    "latest": "php-8.5"
+    "latest": "php-8.5",
+    "tags": {
+      "mugroup-one": {
+        "platforms": ["linux/amd64"]
+      },
+      "mugroup-one-frankenphp": {
+        "platforms": ["linux/amd64"]
+      },
+      "php-7.3": {
+        "platforms": ["linux/amd64"]
+      },
+      "php-8.3": {
+        "platforms": ["linux/amd64"]
+      },
+      "php-8.3-chrome": {
+        "platforms": ["linux/amd64"]
+      },
+      "php-8.5": {
+        "platforms": ["linux/amd64", "linux/arm64"]
+      },
+      "php-8.5-chrome": {
+        "platforms": ["linux/amd64", "linux/arm64"]
+      }
+    }
   },
   "greatmall": {
-    "latest": "php-7.3"
+    "latest": "php-7.3",
+    "tags": {
+      "php-7.3": {
+        "platforms": ["linux/amd64"]
+      }
+    }
   }
 }

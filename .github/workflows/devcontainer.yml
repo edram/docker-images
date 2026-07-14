@@ -26,6 +26,7 @@ jobs:
     outputs:
       context: ${{ steps.config.outputs.context }}
       is_latest: ${{ steps.config.outputs.is_latest }}
+      platforms: ${{ steps.config.outputs.platforms }}
     steps:
       - uses: actions/checkout@v7
 
@@ -34,11 +35,18 @@ jobs:
         env:
           IMAGE: ${{ inputs.image }}
           TAG: ${{ inputs.tag }}
+          CONFIG_FILE: .devcontainer/devcontainer.json
         run: |
           context="./${IMAGE}/${TAG}"
           latest_tag="$(jq -r --arg image "$IMAGE" '.[$image].latest // empty' .github/docker-images.json)"
+          platforms="$(jq -c --arg image "$IMAGE" --arg tag "$TAG" \
+            '.[$image].tags[$tag].platforms // empty' \
+            .github/docker-images.json)"
 
-          test -f "$context/.devcontainer/devcontainer.json"
+          test -f "$context/$CONFIG_FILE"
+          test -n "$platforms"
+          jq -e 'length > 0 and all(.[]; . == "linux/amd64" or . == "linux/arm64")' \
+            <<< "$platforms" > /dev/null
 
           is_latest=false
           if [[ "$TAG" == "$latest_tag" ]]; then
@@ -48,6 +56,7 @@ jobs:
           {
             echo "context=$context"
             echo "is_latest=$is_latest"
+            echo "platforms=$platforms"
           } >> "$GITHUB_OUTPUT"
 
   build:
@@ -55,12 +64,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - runner: ubuntu-latest
-            platform: linux/amd64
-          - runner: ubuntu-24.04-arm
-            platform: linux/arm64
-    runs-on: ${{ matrix.runner }}
+        platform: ${{ fromJSON(needs.prepare.outputs.platforms) }}
+    runs-on: ${{ matrix.platform == 'linux/arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
       - uses: actions/checkout@v7
 
@@ -91,6 +96,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       IS_LATEST: ${{ needs.prepare.outputs.is_latest }}
+      PLATFORMS: ${{ needs.prepare.outputs.platforms }}
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -108,7 +114,12 @@ jobs:
             tags+=(--tag "${IMAGE_NAME}:latest")
           fi
 
+          mapfile -t platforms < <(jq -r '.[]' <<< "$PLATFORMS")
+          sources=()
+          for platform in "${platforms[@]}"; do
+            sources+=("${IMAGE_NAME}:${IMAGE_TAG}-${platform//\//-}")
+          done
+
           docker buildx imagetools create \
             "${tags[@]}" \
-            "${IMAGE_NAME}:${IMAGE_TAG}-linux-amd64" \
-            "${IMAGE_NAME}:${IMAGE_TAG}-linux-arm64"
+            "${sources[@]}"
