@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:1.12.4-php8.5-trixie
+FROM dunglas/frankenphp:1.12.5-php8.5-trixie
 
 # 镜像说明
 LABEL maintainer="edram"

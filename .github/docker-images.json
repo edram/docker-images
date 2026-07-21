@@ -5,9 +5,6 @@
       "mugroup-one": {
         "platforms": ["linux/amd64", "linux/arm64"]
       },
-      "mugroup-one-frankenphp": {
-        "platforms": ["linux/amd64"]
-      },
       "php-7.3": {
         "platforms": ["linux/amd64"]
       },

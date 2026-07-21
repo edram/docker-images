@@ -1,1 +1,0 @@
-FROM edramkai/laravel:mugroup-one-frankenphp
